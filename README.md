@@ -26,3 +26,5 @@ Select two objects, child should be selected last.
 Click `Create` to create constants and animation keys. Move to another frame. Click `Disable` to disable the constraints for the selected objects.
 
 The `Clear` menu will allow you to bake the animation and/or delete all created DP constraints.  
+
+Timeline will add visual markers `Grab` and `Drop`
