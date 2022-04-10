@@ -8,7 +8,7 @@ The add-on allows you to quickly enable/disable parent-child relationships betwe
 
 ## Requirements
 
-The add-on requires Blender 2.83 or newer.
+The add-on requires Blender 3.1 or newer.
 
 
 ## Installation
