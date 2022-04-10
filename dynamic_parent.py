@@ -20,9 +20,9 @@
 
 bl_info = {
     "name": "Dynamic Parent",
-    "author": "Roman Volodin, roman.volodin@gmail.com",
-    "version": (1, 0, 0),
-    "blender": (2, 83, 0),
+    "author": "Roman Volodin, roman.volodin@gmail.com, Emils Geršinskis / EMILSVFX, emilsvfx@gmail.com",
+    "version": (1, 1, 0),
+    "blender": (3, 1, 0),
     "location": "View3D > Tool Panel",
     "description": "Allows to create and disable an animated ChildOf constraint",
     "category": "Animation",
@@ -30,6 +30,8 @@ bl_info = {
 
 import bpy
 import mathutils
+
+
 
 
 def get_rotation_mode(obj):
@@ -245,6 +247,8 @@ class DYNAMIC_PARENT_OT_create(bpy.types.Operator):
     def execute(self, context):
         obj = context.active_object
         frame = context.scene.frame_current
+        scn = bpy.context.scene
+        scn.timeline_markers.new('Grab', frame=frame)
 
         if obj.type == 'ARMATURE':
             obj = bpy.context.active_pose_bone
@@ -275,6 +279,9 @@ class DYNAMIC_PARENT_OT_disable(bpy.types.Operator):
         frame = context.scene.frame_current
         objects = get_selected_objects(context)
         counter = 0
+        
+        scn = bpy.context.scene
+        scn.timeline_markers.new('Drop', frame=frame)
 
         if not objects:
             self.report({'ERROR'}, 'Nothing selected.')
@@ -338,6 +345,19 @@ class DYNAMIC_PARENT_OT_bake(bpy.types.Operator):
                     obj.constraints.remove(const)
 
         return {'FINISHED'}
+    
+class DYNAMIC_PARENT_OT_marker(bpy.types.Operator):
+    """Clear Dynamic Parent Markers"""
+    bl_idname = "dynamic_parent.markers"
+    bl_label = "Clear Dynamic Parent Marker"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        scn = bpy.context.scene
+        scn.timeline_markers.clear()
+        
+    
+        return {'FINISHED'}
 
 
 class DYNAMIC_PARENT_MT_clear_menu(bpy.types.Menu):
@@ -349,6 +369,7 @@ class DYNAMIC_PARENT_MT_clear_menu(bpy.types.Menu):
         layout = self.layout
         layout.operator("dynamic_parent.clear", text="Clear", icon="X")
         layout.operator("dynamic_parent.bake", text="Bake and clear", icon="REC")
+        layout.operator("dynamic_parent.markers", text="Clear marker", icon="X")
 
 
 class DYNAMIC_PARENT_PT_ui(bpy.types.Panel):
@@ -372,6 +393,7 @@ classes = (
     DYNAMIC_PARENT_OT_disable,
     DYNAMIC_PARENT_OT_clear,
     DYNAMIC_PARENT_OT_bake,
+    DYNAMIC_PARENT_OT_marker,
     DYNAMIC_PARENT_MT_clear_menu,
     DYNAMIC_PARENT_PT_ui,
 )
